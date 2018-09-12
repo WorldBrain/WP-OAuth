@@ -32,6 +32,8 @@ Class WPOA {
 		return self::$instance;
 	}
 
+	public $post_link_user = null;
+
 	// define the settings used by this plugin; this array will be used for registering settings, applying default values, and deleting them during uninstall:
 	private $settings = array(
 		'wpoa_show_login_messages' => 0,								// 0, 1
@@ -84,6 +86,9 @@ Class WPOA {
 		'wpoa_google_api_enabled' => 0,									// 0, 1
 		'wpoa_google_api_id' => '',										// any string
 		'wpoa_google_api_secret' => '',									// any string
+		'wpoa_worldbrain_api_enabled' => 0,								// 0, 1
+		'wpoa_worldbrain_api_id' => '',									// any string
+		'wpoa_worldbrain_api_secret' => '',								// any string
 		'wpoa_facebook_api_enabled' => 0,								// 0, 1
 		'wpoa_facebook_api_id' => '',									// any string
 		'wpoa_facebook_api_secret' => '',								// any string
@@ -432,7 +437,12 @@ Class WPOA {
 			get_currentuserinfo();
 			$user_id = $current_user->ID;
 			$this->wpoa_link_account($user_id);
-			// after linking the account, redirect user to their last url
+
+			$link = $this->post_link_user;
+			if ($link) {
+				$link($user_id);
+			}
+
 			$this->wpoa_end_login("Your account was linked successfully with your third party authentication provider.");
 		}
 		// handle the logged out user or no matching user (register the user):
